@@ -5,11 +5,22 @@ export const typeDefs = `#graphql
       name : String
       email : String
       password : String
-     ) : User
+     ) : UserToken
+     
+     signIn(
+       email : String
+       password : String
+     ): UserToken
+  }
+
+  type UserToken {
+    token : String
+    message : String
   }
 
   type Query {
     me: User
+    users: [User]
     posts : [Post]
   }
 
