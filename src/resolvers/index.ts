@@ -1,6 +1,5 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
-import jwt from 'jsonwebtoken'
 import { JwtHelpers } from "../utils/jwtHelper";
 import config from "../config";
 
@@ -39,7 +38,7 @@ export  const resolvers = {
         }
       })
 
-      const token = JwtHelpers({userId : newUser.id});
+      const token = JwtHelpers({userId : newUser.id},config.jwt.secret as string);
       return {
         token,
         message : "user successfully login"
@@ -72,7 +71,7 @@ export  const resolvers = {
 
       // ---- everything ok ----
       // const token = jwt.sign({userId : user.id}, "signature", {expiresIn: "2d"});
-      const token = JwtHelpers({userId : user.id}, config.jwt.secret );
+      const token = JwtHelpers({userId : user.id}, config.jwt.secret as string);
 
       return {
         token,
