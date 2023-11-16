@@ -1,7 +1,8 @@
 export const typeDefs = `#graphql
 
     type Mutation {
-     signup(
+     
+      signup(
       name : String
       email : String
       password : String

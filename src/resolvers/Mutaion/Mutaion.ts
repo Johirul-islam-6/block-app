@@ -3,29 +3,34 @@ import { JwtHelpers } from "../../utils/jwtHelper"
 import bcrypt from "bcrypt";
 
 
+import { PrismaClient } from "@prisma/client"
+
+const prisma = new PrismaClient()
+
  interface userinfo {
     name : string,
     email : string,
     password : string,
-    bio : string
+    bio? : string
   }
 
 export const  Mutation={
-    signup: async (parent : any, args:userinfo, {prisma}:any) => {
-    
+
+    signup: async (parent : any, args:userinfo, context:any) => {
+        
       const isExist = await prisma.user.findFirst({
         where : {
           email : args.email
         }
       })
-
+     console.log(isExist, "ddd", args)
       if(isExist){
         return{
           message : "This email already registered",
           token : null
         }
       }
-
+      
       const hashPassword = await bcrypt.hash(args.password, 12)
       const newUser = await prisma.user.create({
         data : {
@@ -36,7 +41,7 @@ export const  Mutation={
         }
       })
       // ----- when bio write a user then create profile -----
-      if(args.bio){
+      if(args?.bio){
         await prisma.profile.create({
           data : {
             bio : args.bio,
@@ -48,19 +53,22 @@ export const  Mutation={
       const token = JwtHelpers({userId : newUser.id},config.jwt.secret as string);
       return {
         token,
-        message : "user successfully login"
+        
       }
     },
+
+
+
     //  -----log in ----
-    signIn: async(parent : any , args : any, {prisma}:any) =>{
+    signIn: async(parent : any , args : any, context:any) =>{
        
-      const user = await prisma.user.findFirst({
+      const createduser = await prisma.user.findFirst({
         where : {
           email : args.email
         }
       });
 
-      if(!user){
+      if(!createduser){
         return {
           message : "email incorrect",
            token : null
@@ -68,7 +76,7 @@ export const  Mutation={
         }
       }
         // --- password checking --
-      const correctPassword = await bcrypt.compare(args.password, user.password)
+      const correctPassword = await bcrypt.compare(args.password, createduser.password)
       if(!correctPassword){
         return{
           message : "password incorrect",
@@ -78,7 +86,7 @@ export const  Mutation={
 
       // ---- everything ok ----
       // const token = jwt.sign({userId : user.id}, "signature", {expiresIn: "2d"});
-      const token = JwtHelpers({userId : user.id}, config.jwt.secret as string);
+      const token = JwtHelpers({userId : createduser.id}, config.jwt.secret as string);
 
       return {
         token,
