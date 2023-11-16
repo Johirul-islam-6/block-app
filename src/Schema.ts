@@ -5,6 +5,7 @@ export const typeDefs = `#graphql
       name : String
       email : String
       password : String
+      bio : String
      ) : UserToken
      
      signIn(
@@ -23,7 +24,6 @@ export const typeDefs = `#graphql
     users: [User]
     posts : [Post]
   }
-
 
 
   
