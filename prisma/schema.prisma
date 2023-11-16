@@ -48,5 +48,3 @@ model Profile {
 
   @@map("profile")
 }
-
-// --------
