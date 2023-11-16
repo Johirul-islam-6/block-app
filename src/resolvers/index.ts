@@ -8,7 +8,8 @@ const prisma = new PrismaClient()
  interface userinfo {
     name : string,
     email : string,
-    password : string
+    password : string,
+    bio : string
   }
 
 export  const resolvers = {
@@ -34,9 +35,19 @@ export  const resolvers = {
         data : {
           name : args.name,
           email : args.email,
-          password : hashPassword
+          password : hashPassword,
+    
         }
       })
+      // ----- when bio write a user then create profile -----
+      if(args.bio){
+        await prisma.profile.create({
+          data : {
+            bio : args.bio,
+            userId : newUser.id
+          }
+        })
+      }
 
       const token = JwtHelpers({userId : newUser.id},config.jwt.secret as string);
       return {
