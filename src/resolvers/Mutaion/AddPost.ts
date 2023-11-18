@@ -1,3 +1,4 @@
+import { CheckPostUserAccess } from "../../utils/CheckPostUserAccess"
 
 
 export const CreatePost = {
@@ -44,39 +45,43 @@ export const CreatePost = {
       }
      }
 
-     const user = await prisma.user.findUnique({
-      where : {
-        id : userInfo.userId.userId
-      }
-     })
-
-     if(!user){
-      return{
-        userError : "User not found",
-        post : null
-      }
-     }
-
-     const post = await prisma.post.findUnique({
-      where : {
-        id : Number(args.postId)
-      }
-     })
-
-     if(!post){
-      return{
-        userError : "Post not found!",
-        post : null
-      }
-     }
-
-     if(post.authorId !== user.id){
-      return {
-        userError : "This post your are not creator"
-      }
+    //  ----- checking user post parmition ---- 
+     const error = await CheckPostUserAccess(prisma, userInfo.userId, args.post)
+     if(error){
+      return error;
      }
 
      const updatedPost = await prisma.post.update({
+      where : {
+        id : Number(args.postId)
+      },
+      data : args.post
+     })
+
+     return{
+      userError : null,
+      post : updatedPost
+     }
+
+       
+    } ,
+    // ----- update post -----
+   deletePost: async (parent: any, args: any, { prisma, userInfo }: any) => {
+       
+    if(!userInfo){
+      return{
+        userError : "Unathorized Parson",
+        post : null
+      }
+     }
+
+    //  ----- checking user post parmition ---- 
+     const error = await CheckPostUserAccess(prisma, userInfo.userId, args.post)
+     if(error){
+      return error;
+     }
+
+     const updatedPost = await prisma.post.delete({
       where : {
         id : Number(args.postId)
       },
