@@ -13,12 +13,18 @@ export const typeDefs = `#graphql
        email : String
        password : String
      ): UserToken
+
+     addPost(
+     post : PostInput!
+     ):PostPayload
+
+     updatePost(
+      postId : ID!
+      post : PostInput!
+     ): PostPayload
   }
 
-  type UserToken {
-    token : String
-    message : String
-  }
+
 
   type Query {
     me: User
@@ -52,8 +58,20 @@ export const typeDefs = `#graphql
     bio : String
     createdAt : String!
     user : User!
+  }
 
+  type PostPayload{
+    userError : String
+    post : Post
+  }
 
+  type UserToken {
+    token : String
+    message : String
+  }
+  input PostInput {
+    title : String
+    content : String
   }
 
 `;
