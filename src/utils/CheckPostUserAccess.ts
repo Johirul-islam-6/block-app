@@ -2,7 +2,9 @@
 
 export const CheckPostUserAccess = async (prisma : any, userId: any, postId: any) =>{
 
-         const user = await prisma.user.findUnique({
+  console.log(userId, postId, "this is id or ")
+
+    const user = await prisma.user.findUnique({
       where : {
         id : userId
       }

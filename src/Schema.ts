@@ -22,6 +22,14 @@ export const typeDefs = `#graphql
       postId : ID!
       post : PostInput!
      ): PostPayload
+     
+     publishPost(
+      postId : ID!
+     ):PostPayload
+     
+     deletePost(
+      postId : ID!
+     ): PostPayload
   }
 
 
@@ -30,6 +38,8 @@ export const typeDefs = `#graphql
     me: User
     users: [User]
     posts : [Post]
+    profile(userId : ID!): Profile
+    
   }
 
 
